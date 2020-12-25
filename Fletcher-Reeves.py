@@ -5,15 +5,16 @@ import math
 
 def objFunction(x1,x2):
     return 100*np.power((x2-x1**2),2)+(1-x1)**2
+    # return x1-x2+2*x1**2+2*x1*x2+x2**2
 
 def lambdaStar(gradient,s,A):
-    s=s.T
-    gradient=gradient.T
-    num=np.linalg.norm(gradient)
-    print(s.shape,A.shape)
-
+    s=s
+    gradient=gradient
+    num=np.linalg.norm(gradient,ord=1)
+    
+    # print(s)
     den=s.T@A@s
-
+    # print(num,den,A)
     return(num/den)
 
 def Hessian(f,x1,x2):
@@ -27,6 +28,8 @@ def Jacobian(f,x1,x2):
     J=f.jacobian((x1,x2))
     return lambdify((x1,x2), J, modules='numpy')
 
+
+
 sp.init_printing(use_latex=True)
 
 x1,x2=symbols('x1 x2')
@@ -35,15 +38,46 @@ x1,x2=symbols('x1 x2')
 H=Hessian(objFunction(x1,x2),x1,x2)
 J=Jacobian(objFunction(x1,x2),x1,x2)
 
-# First iteration
-x=np.array([-1.2,1])
-xv=(x1,x2)
-# grad1=J.evalf(subs={x1 : x[0],x2: x[1]})
-# Hessian1=H.evalf(subs={x1 : x[0],x2: x[1]})
 
-# g_func = lambdify(xv, Hessian1, modules='numpy')
-# print(J(x))
-# print(type(J(x[0],x[1]).shape))
-lambdastar_=lambdaStar(J(x[0],x[1]),-J(x[0],x[1]),H(x[0],x[1]))
-# xold=x
-# xnew=xold
+# # First iteration
+xnought=np.array([[0],[0]])
+# xv=(x1,x2)
+Jnought=J(xnought[0,0],xnought[1,0]).reshape(2,1)
+HesNought=H(xnought[0,0],xnought[1,0])
+lambdastar=lambdaStar(Jnought,-Jnought,HesNought)
+# print(lambdastar)
+xold=xnought
+s=-Jnought
+# print(s)
+xnew=(xold+lambdastar*s)
+# print(J(x[0,0],x[1,0]).reshape(2,1))
+
+# print(Jnought)
+# # # print(J(xnew[0],xnew[1]))
+i=0
+while ( J(xnew[0],xnew[1]).all()>0.001 or i<1000):
+    i=+1
+    # print(xnew.shape)
+    Jnew=J(xnew[0,0],xnew[1,0]).reshape(2,1)
+    Jold=J(xold[0,0],xold[1,0]).reshape(2,1)
+    beta=np.linalg.norm(Jnew, np.inf)/np.linalg.norm(Jold, np.inf)
+    # print(beta)
+    # # print("s ",J(xold[0],xold[1]))
+    # # print("Gradient",J(xnew[0],xnew[1]))
+    s=-Jnew+beta*s
+    lambdastar=lambdaStar(Jnew,s,H(xnew[0,0],xnew[1,0]))
+    # print(lambdastar)
+
+    xold=xnew
+    xnew=xold+lambdastar*s
+    # print("New ",xnew)
+    print(J(xnew[0],xnew[1]))
+    
+
+
+
+    
+
+
+
+
