@@ -2,6 +2,13 @@ import sympy as sp
 import numpy as np
 from sympy import *
 import math 
+from Utilities import *
+import sys
+import os
+# sys.path.append(os.path.abspath(sys.path[0] + '/..'))
+# sys.path.append( '/../1-D-minimization-Problem')
+sys.path.insert(1, '../1-D-minimization-Problem')
+from CubicInterpolation import *
 
 def objFunction(x1,x2):
     return 100*np.power((x2-x1**2),2)+(1-x1)**2
@@ -51,11 +58,11 @@ s=-Jnought
 # print(s)
 xnew=(xold+lambdastar*s)
 # print(J(x[0,0],x[1,0]).reshape(2,1))
-
+epsilon=0.00001
 # print(Jnought)
 # # # print(J(xnew[0],xnew[1]))
 i=0
-while ( J(xnew[0],xnew[1]).all()>0.001 or i<1000):
+while np.linalg.norm( J(xnew[0],xnew[1]).reshape(2,1),ord=2)>epsilon:
     i=i+1
     # print(xnew.shape)
     Jnew=J(xnew[0,0],xnew[1,0]).reshape(2,1)
@@ -65,7 +72,8 @@ while ( J(xnew[0],xnew[1]).all()>0.001 or i<1000):
     # # print("s ",J(xold[0],xold[1]))
     # # print("Gradient",J(xnew[0],xnew[1]))
     s=-Jnew+beta*s
-    lambdastar=lambdaStar(Jnew,s,H(xnew[0,0],xnew[1,0]))
+    # lambdastar=lambdaStar(Jnew,s,H(xnew[0,0],xnew[1,0]))
+    lambdastar,OF,gradOF=CubicInterpolation(0.001,s,xnew)
     #lambdastar=0.001
     # print(lambdastar)
 
@@ -73,7 +81,8 @@ while ( J(xnew[0],xnew[1]).all()>0.001 or i<1000):
     xnew=xold+lambdastar*s
     # print("New ",xnew)
     print(J(xnew[0],xnew[1]))
-    print(i)
-    print(lambdastar)
+    print(xnew)
+    # print(i)
+    # print(lambdastar)
     
  
