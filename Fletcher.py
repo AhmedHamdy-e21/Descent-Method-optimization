@@ -58,10 +58,17 @@ s=-Jnought
 # print(s)
 xnew=(xold+lambdastar*s)
 # print(J(x[0,0],x[1,0]).reshape(2,1))
-epsilon=0.00001
+epsilon=0.0001
 # print(Jnought)
 # # # print(J(xnew[0],xnew[1]))
 i=0
+xhist=[]
+fhist=[]
+Itr=[]
+xhist.append(xold)
+xhist.append(xnew)
+fhist.append(objFunction(xnew[0],xnew[1]))
+Itr.append(i)
 while np.linalg.norm( J(xnew[0],xnew[1]).reshape(2,1),ord=2)>epsilon:
     i=i+1
     # print(xnew.shape)
@@ -80,9 +87,23 @@ while np.linalg.norm( J(xnew[0],xnew[1]).reshape(2,1),ord=2)>epsilon:
     xold=xnew
     xnew=xold+lambdastar*s
     # print("New ",xnew)
-    print(J(xnew[0],xnew[1]))
-    print(xnew)
+    # print(J(xnew[0],xnew[1]))
+    # print(xnew)
     # print(i)
     # print(lambdastar)
+    xhist.append(xnew)
+    fhist.append(objFunction(xnew[0],xnew[1]))
+    Itr.append(i)
     
  
+# Plot(Itr,fhist,'Number Of Iterations','Objective Function',1,"Fletcher-Reeves")
+# Plot(Itr,xhist,'Number Of Iterations','optimal solution',2,"Fletcher-Reeves")
+# plt.show()
+
+xhist=np.array(xhist)
+fhist=np.array(fhist)
+# print(fhist.shape)
+X1, X2 = np.meshgrid(xhist[:,0],xhist[:,1])
+Z=objFunction(X1,X2)
+#Plot3D(X1,X2,Z,2,'OF Fletcher','X1','X2','Objective Function')
+PlotLine3D(xhist[:,0],xhist[:,1],objFunction(xhist[:,0,0],xhist[:,1,0]),2,'OF Fletcher 3Dline','X1','X2','Objective Function')

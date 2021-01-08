@@ -4,7 +4,7 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 
-def Plot3D(X,Y,Z):
+def Plot3D(X,Y,Z,i,Name,xlabel,ylabel,zlabel):
     fig = plt.figure(2)
     ax = fig.gca(projection='3d')
     surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
@@ -19,10 +19,15 @@ def Plot3D(X,Y,Z):
     ax.scatter3D(-1.2, 1, objFunction(-1.2,1), c=objFunction(-1.2,1), cmap='Greens')
 
 
-    fig = plt.figure(1)
-    ax1 = plt.axes(projection='3d')
-    ax1.contour3D(X, Y, Z, 50, cmap='binary')
-
+    #fig = plt.figure(1)
+    #ax1 = plt.axes(projection='3d')
+    #ax1.contour3D(X, Y, Z, 50, cmap='binary')
+ 
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_zlabel(zlabel)
+    plt.savefig(str(i)+Name+'.png')
+    plt.savefig(str(i)+Name+'.pdf')
     plt.show()
 
 
@@ -34,4 +39,4 @@ X1=np.linspace(-100,100,2000)
 X2=np.linspace(-100,100,2000)
 X1, X2 = np.meshgrid(X1, X2)
 Z=objFunction(X1,X2)
-Plot3D(X1,X2,Z)
+Plot3D(X1,X2,Z,1,'Objective Function improvments','X1','X2','Objective Function')

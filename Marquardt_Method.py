@@ -58,9 +58,18 @@ print(s0,MarquardtDirection( Hess ,grad,x0[0,0],x0[1,0],alpha))
 x1=x0
 c1=0.25
 c2=3
-epsilon=0.00001
+epsilon=0.001
 flag=0
+i=0
+xhist=[]
+fhist=[]
+Itr=[]
+xhist.append(x0)
+xhist.append(x1)
+fhist.append(objFunction(x1[0,0],x1[1,0]))
+Itr.append(i)
 while np.linalg.norm(grad(x1[0,0],x1[1,0]).reshape(2,1),ord=2)>epsilon:
+    i=i+1
     s=MarquardtDirection( Hess ,grad,x1[0,0],x1[1,0],alpha)
     Lambda,OF,gradOF=CubicInterpolation(0.001,s,x1)
     fprev=objFunction(x1[0,0],x1[1,0])
@@ -74,6 +83,23 @@ while np.linalg.norm(grad(x1[0,0],x1[1,0]).reshape(2,1),ord=2)>epsilon:
             alpha=10000
         
         alpha=c2*alpha
-    print(x1,Lambda,fnext,fprev,grad(x1[0,0],x1[1,0]))
+    # print(x1,Lambda,fnext,fprev,grad(x1[0,0],x1[1,0]))
 
 
+    xhist.append(x1)
+    fhist.append(objFunction(x1[0,0],x1[1,0]))
+    Itr.append(i)
+    
+ 
+# # Plot(Itr,fhist,'Number Of Iterations','Objective Function',1,"Marquardt")
+# # Plot(Itr,xhist,'Number Of Iterations','optimal solution',2,"Marquardt")
+# # plt.show()
+
+
+xhist=np.array(xhist)
+fhist=np.array(fhist)
+# print(fhist.shape)
+X1, X2 = np.meshgrid(xhist[:,0],xhist[:,1])
+Z=objFunction(X1,X2)
+# Plot3D(X1,X2,Z,2,'OF Marquardt','X1','X2','Objective Function')
+PlotLine3D(xhist[:,0],xhist[:,1],objFunction(xhist[:,0,0],xhist[:,1,0]),2,'OF Marquardt 3Dline','X1','X2','Objective Function')
